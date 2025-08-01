@@ -1,30 +1,29 @@
-type User struct {
-    ID       string `json:"id"`
-    Name     string `json:"name"`
-    Email    string `json:"email"`
-    Password string `json:"password"`
-}
+package repository
+
+import (
+    "go-crud-api/internal/model"
+)
 
 type UserRepository struct {
-    users map[string]User
+    users map[string]model.User
 }
 
 func NewUserRepository() *UserRepository {
     return &UserRepository{
-        users: make(map[string]User),
+        users: make(map[string]model.User),
     }
 }
 
-func (r *UserRepository) Save(user User) {
+func (r *UserRepository) Save(user model.User) {
     r.users[user.ID] = user
 }
 
-func (r *UserRepository) FindById(id string) (User, bool) {
+func (r *UserRepository) FindById(id string) (model.User, bool) {
     user, exists := r.users[id]
     return user, exists
 }
 
-func (r *UserRepository) Update(user User) bool {
+func (r *UserRepository) Update(user model.User) bool {
     _, exists := r.users[user.ID]
     if exists {
         r.users[user.ID] = user

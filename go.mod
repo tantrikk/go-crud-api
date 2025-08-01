@@ -1,9 +1,8 @@
 module go-crud-api
 
-go 1.18
+go 1.20
 
 require (
-    github.com/gin-gonic/gin v1.7.4
-    github.com/jinzhu/gorm v1.9.16
-    github.com/jinzhu/gorm/dialects/mysql v1.9.16
+	github.com/google/uuid v1.3.0
+	github.com/gorilla/mux v1.8.0
 )

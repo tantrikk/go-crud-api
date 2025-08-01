@@ -7,9 +7,11 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o go-crud-api ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-crud-api ./cmd/main.go
 
 FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 

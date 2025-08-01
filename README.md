@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# go-crud-api
-go crud api
-=======
 # Go CRUD API
 
 This project is a simple CRUD API for managing users, built with Go. It provides basic operations to create, read, update, and delete user information.
@@ -76,4 +72,3 @@ To build and run the application in a Docker container, use the following comman
    ```
 
 The application will be accessible at `http://localhost:8080`.
->>>>>>> f05c9c1 (initial commit)
