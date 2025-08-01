@@ -10,10 +10,10 @@ import (
 )
 
 type UserHandler struct {
-    repo *repository.UserRepository
+    repo repository.UserRepositoryInterface
 }
 
-func NewUserHandler(repo *repository.UserRepository) *UserHandler {
+func NewUserHandler(repo repository.UserRepositoryInterface) *UserHandler {
     return &UserHandler{repo: repo}
 }
 
@@ -25,11 +25,25 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
     }
     
     user.ID = uuid.New().String()
-    h.repo.Save(user)
+    if err := h.repo.Save(user); err != nil {
+        http.Error(w, "Failed to create user", http.StatusInternalServerError)
+        return
+    }
     
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
     json.NewEncoder(w).Encode(user)
+}
+
+func (h *UserHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+    users, err := h.repo.GetAll()
+    if err != nil {
+        http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
+        return
+    }
+    
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(users)
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {

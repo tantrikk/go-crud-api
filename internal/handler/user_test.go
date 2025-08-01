@@ -13,7 +13,7 @@ import (
 )
 
 func setupTestRouter() (*mux.Router, *UserHandler) {
-    repo := repository.NewUserRepository()
+    repo := repository.NewMockUserRepository()
     handler := NewUserHandler(repo)
     router := mux.NewRouter()
     handler.RegisterRoutes(router)
@@ -110,6 +110,7 @@ func TestGetUser(t *testing.T) {
         Email:    "test@example.com",
         Password: "password",
     }
+    // Use the repo interface to save the user
     handler.repo.Save(testUser)
     
     tests := []struct {
@@ -299,7 +300,7 @@ func TestDeleteUser(t *testing.T) {
 }
 
 func TestRegisterRoutes(t *testing.T) {
-    repo := repository.NewUserRepository()
+    repo := repository.NewMockUserRepository()
     handler := NewUserHandler(repo)
     router := mux.NewRouter()
     

@@ -5,18 +5,18 @@ import (
     "go-crud-api/internal/model"
 )
 
-func TestNewUserRepository(t *testing.T) {
-    repo := NewUserRepository()
+func TestNewMockUserRepository(t *testing.T) {
+    repo := NewMockUserRepository()
     if repo == nil {
-        t.Fatal("NewUserRepository returned nil")
+        t.Fatal("NewMockUserRepository returned nil")
     }
     if repo.users == nil {
         t.Fatal("users map not initialized")
     }
 }
 
-func TestUserRepository_Save(t *testing.T) {
-    repo := NewUserRepository()
+func TestMockUserRepository_Save(t *testing.T) {
+    repo := NewMockUserRepository()
     
     user := model.User{
         ID:       "test-123",
@@ -25,7 +25,10 @@ func TestUserRepository_Save(t *testing.T) {
         Password: "password",
     }
     
-    repo.Save(user)
+    err := repo.Save(user)
+    if err != nil {
+        t.Fatalf("Save returned error: %v", err)
+    }
     
     // Verify user was saved
     savedUser, exists := repo.users[user.ID]
@@ -38,8 +41,27 @@ func TestUserRepository_Save(t *testing.T) {
     }
 }
 
-func TestUserRepository_FindById(t *testing.T) {
-    repo := NewUserRepository()
+func TestMockUserRepository_GetAll(t *testing.T) {
+    repo := NewMockUserRepository()
+    
+    // Add test users
+    user1 := model.User{ID: "1", Name: "User 1"}
+    user2 := model.User{ID: "2", Name: "User 2"}
+    repo.Save(user1)
+    repo.Save(user2)
+    
+    users, err := repo.GetAll()
+    if err != nil {
+        t.Fatalf("GetAll returned error: %v", err)
+    }
+    
+    if len(users) != 2 {
+        t.Errorf("GetAll returned %d users, expected 2", len(users))
+    }
+}
+
+func TestMockUserRepository_FindById(t *testing.T) {
+    repo := NewMockUserRepository()
     
     // Add test user
     user := model.User{
@@ -83,8 +105,8 @@ func TestUserRepository_FindById(t *testing.T) {
     }
 }
 
-func TestUserRepository_Update(t *testing.T) {
-    repo := NewUserRepository()
+func TestMockUserRepository_Update(t *testing.T) {
+    repo := NewMockUserRepository()
     
     // Add initial user
     originalUser := model.User{
@@ -139,8 +161,8 @@ func TestUserRepository_Update(t *testing.T) {
     }
 }
 
-func TestUserRepository_Delete(t *testing.T) {
-    repo := NewUserRepository()
+func TestMockUserRepository_Delete(t *testing.T) {
+    repo := NewMockUserRepository()
     
     // Add test users
     user1 := model.User{ID: "delete-1", Name: "User 1"}
@@ -192,10 +214,4 @@ func TestUserRepository_Delete(t *testing.T) {
     if !found {
         t.Error("Unrelated user was deleted")
     }
-}
-
-func TestUserRepository_ConcurrentAccess(t *testing.T) {
-    // Note: Current implementation is not thread-safe
-    // This test documents that behavior
-    t.Skip("Repository is not thread-safe - skipping concurrent access test")
 }
