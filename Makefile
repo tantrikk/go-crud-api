@@ -1,16 +1,19 @@
-.PHONY: help build run stop clean logs restart status test
+.PHONY: help build run stop clean logs restart status test test-unit test-api test-all test-coverage
 
 # Default target
 help:
 	@echo "Available commands:"
-	@echo "  make build    - Build the Docker image"
-	@echo "  make run      - Build and run the container"
-	@echo "  make stop     - Stop the running container"
-	@echo "  make clean    - Stop and remove container and image"
-	@echo "  make logs     - Show container logs"
-	@echo "  make restart  - Restart the container"
-	@echo "  make status   - Show container status"
-	@echo "  make test     - Test the API endpoints"
+	@echo "  make build         - Build the Docker image"
+	@echo "  make run           - Build and run the container"
+	@echo "  make stop          - Stop the running container"
+	@echo "  make clean         - Stop and remove container and image"
+	@echo "  make logs          - Show container logs"
+	@echo "  make restart       - Restart the container"
+	@echo "  make status        - Show container status"
+	@echo "  make test-api      - Test the API endpoints"
+	@echo "  make test-unit     - Run unit tests"
+	@echo "  make test-all      - Run all tests"
+	@echo "  make test-coverage - Run tests with coverage report"
 
 # Build Docker image
 build:
@@ -50,7 +53,7 @@ status:
 	@docker ps -a | grep go-crud-api-container || echo "No container found"
 
 # Test API endpoints
-test:
+test-api:
 	@echo "Testing API endpoints..."
 	@echo "\n1. Creating user..."
 	@curl -X POST http://localhost:8080/users \
@@ -58,3 +61,18 @@ test:
 		-d '{"name":"Test User","email":"test@example.com","password":"test123"}' \
 		-s | jq . || echo "Failed to create user"
 	@echo "\n2. API is working!"
+
+# Run unit tests
+test-unit:
+	@echo "Running unit tests..."
+	@go test -v ./...
+
+# Run all tests
+test-all: test-unit test-api
+
+# Run tests with coverage
+test-coverage:
+	@echo "Running tests with coverage..."
+	@go test -v -coverprofile=coverage.out ./...
+	@go tool cover -html=coverage.out -o coverage.html
+	@echo "Coverage report generated: coverage.html"
